@@ -1,0 +1,1 @@
+export const postgresUrl = process.env.POSTGRES_URL;
