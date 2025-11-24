@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "../../client";
-import type { SignInCredentials, SignUpCredentials } from "../../types";
+import { supabase } from "../../supabase";
+import type { SignInCredentials, SignUpCredentials } from "../../../types";
 
 export function useAuth() {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,7 @@ export function useAuth() {
       {
         email,
         password,
-      }
+      },
     );
 
     setIsLoading(false);

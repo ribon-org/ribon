@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "../../client";
-import type { User } from "../../types";
+import { supabase } from "../../supabase";
+import type { User } from "../../../types";
 
 export function useUser() {
   const [user, setUser] = useState<User | null>(null);

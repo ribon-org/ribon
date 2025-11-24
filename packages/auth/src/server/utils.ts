@@ -1,4 +1,4 @@
-import { createClient } from "../server";
+import { createClient } from "./supabase";
 import type { User } from "../types";
 
 export async function getUser(): Promise<User | null> {

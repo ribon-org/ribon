@@ -28,3 +28,5 @@ export type AuthError = {
   message: string;
   status?: number;
 };
+
+export type { Database } from "./database";
