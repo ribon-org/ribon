@@ -4,27 +4,27 @@ export type User = SupabaseUser;
 
 export type AuthSession = Session;
 
-export interface AuthState {
+export type AuthState = {
   user: User | null;
   session: AuthSession | null;
   isLoading: boolean;
-}
+};
 
-export interface SignInCredentials {
+export type SignInCredentials = {
   email: string;
   password: string;
-}
+};
 
-export interface SignUpCredentials extends SignInCredentials {
+export type SignUpCredentials = SignInCredentials & {
   metadata?: {
     full_name?: string;
     name?: string;
     age?: number;
     [key: string]: unknown;
   };
-}
+};
 
-export interface AuthError {
+export type AuthError = {
   message: string;
   status?: number;
-}
+};
