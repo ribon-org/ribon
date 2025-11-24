@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@repo/auth/hooks/useAuth";
+import { useAuth } from "@repo/auth/client";
 import { useState } from "react";
 
 export default function Page() {
