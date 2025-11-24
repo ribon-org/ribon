@@ -19,7 +19,6 @@ export default function LoginPage() {
     });
 
     if (!error && user) {
-      // ログイン成功
       router.push("/");
       router.refresh();
     }

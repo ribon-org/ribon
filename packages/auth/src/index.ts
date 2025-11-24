@@ -1,6 +1,3 @@
-// 型のみをエクスポート
-// 実装はclient/またはserver/から個別にインポートしてください
-
 export type {
   User,
   AuthSession,
