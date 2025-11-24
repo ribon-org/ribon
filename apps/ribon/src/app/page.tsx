@@ -1,11 +1,12 @@
 "use client";
 
-import { useUser } from "@repo/auth/client";
+import { useUser, useAuth } from "@repo/auth/client";
 import { Button } from "@repo/ui/components/button";
 import Link from "next/link";
 
 export default function Home() {
   const { user, isLoading } = useUser();
+  const { signOut } = useAuth();
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -15,7 +16,15 @@ export default function Home() {
       <br />
 
       {user ? (
-        <div>Welcome {user.email}</div>
+        <div className="space-y-4 text-center">
+          <p className="text-lg">Welcome {user.email}</p>
+          <button
+            onClick={() => signOut()}
+            className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+          >
+            ログアウト
+          </button>
+        </div>
       ) : (
         <div className="space-y-4">
           <p>ログインまたは登録してください</p>
