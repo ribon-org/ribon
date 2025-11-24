@@ -1,11 +1,11 @@
 "use client";
 
-import { useAuth } from "@repo/auth/client";
+import { useSignIn } from "@repo/auth/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const { signIn, isLoading, error } = useAuth();
+  const { signIn, isLoading, error } = useSignIn();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();

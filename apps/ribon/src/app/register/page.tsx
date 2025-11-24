@@ -1,11 +1,11 @@
 "use client";
 
-import { useAuth } from "@repo/auth/client";
+import { useSignUp } from "@repo/auth/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const { signUp, isLoading, error } = useAuth();
+  const { signUp, isLoading, error } = useSignUp();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -23,7 +23,6 @@ export default function RegisterPage() {
     });
 
     if (!error && user) {
-      // 登録成功
       router.push("/");
       router.refresh();
     }

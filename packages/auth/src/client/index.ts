@@ -3,4 +3,6 @@
 
 export { createClient, supabase } from "./supabase";
 export { useUser } from "./hooks/useUser";
-export { useAuth } from "./hooks/useAuth";
+export { useSignIn } from "./hooks/useSignIn";
+export { useSignUp } from "./hooks/useSignUp";
+export { useSignOut } from "./hooks/useSignOut";

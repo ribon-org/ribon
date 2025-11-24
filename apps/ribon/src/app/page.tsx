@@ -1,12 +1,12 @@
 "use client";
 
-import { useUser, useAuth } from "@repo/auth/client";
+import { useUser, useSignOut } from "@repo/auth/client";
 import { Button } from "@repo/ui/components/button";
 import Link from "next/link";
 
 export default function Home() {
   const { user, isLoading } = useUser();
-  const { signOut } = useAuth();
+  const { signOut } = useSignOut();
   if (isLoading) {
     return <div>Loading...</div>;
   }
