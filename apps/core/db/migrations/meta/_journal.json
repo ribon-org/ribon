@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1763969534060,
+      "tag": "20251124073214_create_users",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763969535000,
+      "tag": "20251124073215_create_function_handle_new_user",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763969536000,
+      "tag": "20251124073216_create_trigger_on_auth_user_created",
+      "breakpoints": true
+    }
+  ]
+}
