@@ -1,31 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { supabase } from "../../supabase";
+import { signOutAction } from "@repo/auth/server/actions";
+import { useTransition, useState } from "react";
 
 export function useSignOut() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const signOut = async () => {
-    setIsLoading(true);
     setError(null);
-
-    const { error: signOutError } = await supabase.auth.signOut();
-
-    setIsLoading(false);
-
-    if (signOutError) {
-      setError(signOutError.message);
-      return { error: signOutError };
-    }
-
-    return { error: null };
+    startTransition(async () => {
+      try {
+        await signOutAction();
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "ログアウトに失敗しました",
+        );
+      }
+    });
   };
 
   return {
     signOut,
-    isLoading,
+    isPending,
     error,
   };
 }
