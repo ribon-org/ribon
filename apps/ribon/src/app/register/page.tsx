@@ -23,7 +23,7 @@ export default function RegisterPage() {
     });
 
     if (!error && user) {
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     }
   };
