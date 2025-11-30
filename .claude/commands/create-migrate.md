@@ -12,7 +12,7 @@ model: sonnet
 
 以下を並列実行して、変更されたスキーマを検知してください:
 
-- `git diff apps/core/db/schemas/`でスキーマファイルの差分を確認
+- `git diff HEAD~5 apps/core/db/schemas/`で過去5コミット分のスキーマファイルの差分を確認
 - `git status apps/core/db/schemas/`で新規作成・変更されたファイルを確認
 - `ls apps/core/db/schemas/`でスキーマファイル一覧を確認
 
