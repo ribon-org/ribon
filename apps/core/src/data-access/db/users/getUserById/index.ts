@@ -4,9 +4,6 @@ import { usersTable } from "../../../../../db/schemas/usersTable";
 
 export type DB = PostgresJsDatabase<Record<string, never>>;
 
-/**
- * ユーザーをIDで取得（Soft Delete対応）
- */
 export async function getUserById(db: DB, userId: string) {
   const result = await db
     .select()
