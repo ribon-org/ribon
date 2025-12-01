@@ -1,9 +1,7 @@
 import { transactionDB } from "../../../db/client/transaction";
-import {
-  getUserById,
-  getUserNameByUserId,
-  insertUserName,
-} from "../../data-access/db/users";
+import { getUserById } from "../../data-access/db/users/getUserById";
+import { getUserNameByUserId } from "../../data-access/db/users/getUserNameByUserId";
+import { insertUserName } from "../../data-access/db/users/insertUserName";
 
 export interface RegisterUserNameInput {
   userId: string;

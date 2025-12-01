@@ -1,9 +1,7 @@
 import { transactionDB } from "../../../db/client/transaction";
-import {
-  getUserById,
-  getUserNameByUserId,
-  updateUserNameRecord,
-} from "../../data-access/db/users";
+import { getUserById } from "../../data-access/db/users/getUserById";
+import { getUserNameByUserId } from "../../data-access/db/users/getUserNameByUserId";
+import { updateUserNameRecord } from "../../data-access/db/users/updateUserNameRecord";
 
 export interface UpdateUserNameInput {
   userId: string;
