@@ -3,15 +3,17 @@ import { getUserById } from "../../data-access/db/users/getUserById";
 import { getUserNameByUserId } from "../../data-access/db/users/getUserNameByUserId";
 import { insertUserName } from "../../data-access/db/users/insertUserName";
 
-export interface RegisterUserNameInput {
+type RegisterUserName = {
   userId: string;
   name: string;
   authUserId: string;
-}
+};
 
-export async function registerUserName(input: RegisterUserNameInput) {
-  const { userId, name, authUserId } = input;
-
+export const registerUserName = async ({
+  userId,
+  name,
+  authUserId,
+}: RegisterUserName) => {
   return await transactionDB.transaction(async (tx) => {
     const user = await getUserById(tx, userId);
     if (!user) {
@@ -46,4 +48,4 @@ export async function registerUserName(input: RegisterUserNameInput) {
       updatedAt: result.updatedAt,
     };
   });
-}
+};

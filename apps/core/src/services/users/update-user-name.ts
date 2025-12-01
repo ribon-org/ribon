@@ -3,15 +3,17 @@ import { getUserById } from "../../data-access/db/users/getUserById";
 import { getUserNameByUserId } from "../../data-access/db/users/getUserNameByUserId";
 import { updateUserNameRecord } from "../../data-access/db/users/updateUserNameRecord";
 
-export interface UpdateUserNameInput {
+export type UpdateUserName = {
   userId: string;
   name: string;
   authUserId: string;
-}
+};
 
-export async function updateUserName(input: UpdateUserNameInput) {
-  const { userId, name, authUserId } = input;
-
+export const updateUserName = async ({
+  userId,
+  name,
+  authUserId,
+}: UpdateUserName) => {
   return await transactionDB.transaction(async (tx) => {
     const user = await getUserById(tx, userId);
     if (!user) {
@@ -45,4 +47,4 @@ export async function updateUserName(input: UpdateUserNameInput) {
       updatedAt: result.updatedAt,
     };
   });
-}
+};
