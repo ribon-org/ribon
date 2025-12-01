@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
-import { registerUserName } from "../services/users/register-user-name";
+import { createUserName } from "../services/users/create-user-name";
 import { updateUserName } from "../services/users/update-user-name";
 import type { User } from "@supabase/supabase-js";
 
@@ -30,7 +30,7 @@ users.post(
     const authUser = c.get("user");
 
     try {
-      const result = await registerUserName({
+      const result = await createUserName({
         userId,
         name,
         authUserId: authUser.id,

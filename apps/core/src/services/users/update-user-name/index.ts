@@ -1,19 +1,19 @@
 import { transactionDB } from "../../../db/client/transaction";
 import { getUserById } from "../../data-access/db/users/getUserById";
 import { getUserNameByUserId } from "../../data-access/db/users/getUserNameByUserId";
-import { insertUserName } from "../../data-access/db/users/insertUserName";
+import { updateUserNameRecord } from "../../data-access/db/users/updateUserNameRecord";
 
-type RegisterUserName = {
+export type UpdateUserName = {
   userId: string;
   name: string;
   authUserId: string;
 };
 
-export const registerUserName = async ({
+export const updateUserName = async ({
   userId,
   name,
   authUserId,
-}: RegisterUserName) => {
+}: UpdateUserName) => {
   return await transactionDB.transaction(async (tx) => {
     const user = await getUserById(tx, userId);
     if (!user) {
@@ -22,29 +22,28 @@ export const registerUserName = async ({
 
     if (user.supabaseAuthId !== authUserId) {
       throw new Error(
-        "Forbidden: You don't have permission to register this user's name"
+        "Forbidden: You don't have permission to update this user's name",
       );
     }
 
     const existingUserName = await getUserNameByUserId(tx, userId);
-    if (existingUserName) {
-      throw new Error("Conflict: User name already exists");
+    if (!existingUserName) {
+      throw new Error("Not found: User name does not exist");
     }
 
-    const result = await insertUserName(tx, {
-      userId,
+    const result = await updateUserNameRecord(tx, {
+      userNameId: existingUserName.id,
       name,
     });
 
     if (!result) {
-      throw new Error("Failed to create user name");
+      throw new Error("Failed to update user name");
     }
 
     return {
       id: result.id,
       userId: result.userId,
       name: result.name,
-      createdAt: result.createdAt,
       updatedAt: result.updatedAt,
     };
   });
