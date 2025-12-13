@@ -1,3 +1,6 @@
+# コミットメッセージの規約
+@docs/dev/commit-message.md
+
 # 環境変数の管理
 
 ## 重要なルール
