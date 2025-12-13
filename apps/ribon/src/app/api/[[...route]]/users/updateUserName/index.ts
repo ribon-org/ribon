@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { coreClient } from "../../../../../lib/core-client";
+import { coreClient } from "../../../../../lib/coreClient";
 
 const requestSchema = z.object({
   name: z.string().min(1).max(255),
@@ -39,7 +39,7 @@ const app = new Hono().post(
     }
 
     return c.json(data, 200);
-  },
+  }
 );
 
 export default app;

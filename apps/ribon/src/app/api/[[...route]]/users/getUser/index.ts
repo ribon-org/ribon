@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { coreClient } from "../../../../../lib/core-client";
+import { coreClient } from "../../../../../lib/coreClient";
 
 export const paramsSchema = z.object({
   userId: z.uuid(),
@@ -28,7 +28,7 @@ const app = new Hono().get(
     }
 
     return c.json(data, 200);
-  },
+  }
 );
 
 export default app;
