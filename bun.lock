@@ -24,6 +24,7 @@
       },
       "devDependencies": {
         "@hono/zod-validator": "^0.7.5",
+        "@repo/auth": "workspace:*",
         "@tailwindcss/postcss": "^4",
         "@types/node": "^20",
         "@types/react": "^19",
