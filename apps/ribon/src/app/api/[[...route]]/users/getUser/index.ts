@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-
-const CORE_API_URL = process.env.CORE_API_URL;
+import { coreClient } from "../../../../../lib/core-client";
 
 export const paramsSchema = z.object({
   userId: z.uuid(),
@@ -18,11 +17,8 @@ const app = new Hono().get(
   async (c) => {
     const { userId } = c.req.valid("param");
 
-    const response = await fetch(`${CORE_API_URL}/api/users/${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await coreClient.api.users[":userId"].$get({
+      param: { userId },
     });
 
     const data = await response.json();
