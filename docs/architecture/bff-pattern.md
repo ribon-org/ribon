@@ -270,6 +270,140 @@ import { supabase } from "@repo/auth/client/supabase";
 await supabase.auth.signOut();
 ```
 
+## coreClientの使用
+
+### 概要
+
+ribonのBFF層からcoreのAPIを呼び出す際は、`coreClient`を使用してください。
+これにより、型安全なRPCスタイルのAPI呼び出しが可能になります。
+
+### coreClientの定義
+
+**ファイル**: `apps/ribon/src/lib/coreClient.ts`
+
+```typescript
+import { hc } from "hono/client";
+import type { AppType as CoreType } from "../../../core/src/app/api/[[...route]]/route";
+
+const coreUrl = process.env.CORE_API_URL || "";
+const coreApiKey = process.env.CORE_API_KEY || "";
+
+export const coreClient = hc<CoreType>(coreUrl, {
+  headers: {
+    Authorization: `Bearer ${coreApiKey}`,
+  },
+});
+```
+
+### 使用例
+
+#### GET リクエスト
+
+```typescript
+import { coreClient } from "../../../../../lib/coreClient";
+
+const response = await coreClient.api.users[":userId"].$get({
+  param: { userId },
+});
+
+const data = await response.json();
+```
+
+#### POST リクエスト
+
+```typescript
+import { coreClient } from "../../../../../lib/coreClient";
+
+const response = await coreClient.api.users[":userId"].name.$post({
+  param: { userId },
+  json: { name },
+});
+
+const data = await response.json();
+```
+
+### BFF APIの実装パターン
+
+#### ディレクトリ構造
+
+```
+apps/ribon/src/app/api/
+└── [[...route]]/
+    ├── route.ts          # メインルーター
+    └── users/
+        ├── index.ts      # ユーザールートの統合
+        ├── getUser/
+        │   └── index.ts  # GET /api/users/:userId
+        ├── storeUserName/
+        │   └── index.ts  # POST /api/users/:userId/name
+        └── updateUserName/
+            └── index.ts  # POST /api/users/:userId/name/update
+```
+
+#### 実装例
+
+**apps/ribon/src/app/api/[[...route]]/users/getUser/index.ts**
+
+```typescript
+import { z } from "zod";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { coreClient } from "../../../../../lib/coreClient";
+
+export const paramsSchema = z.object({
+  userId: z.uuid(),
+});
+
+const app = new Hono().get(
+  "/:userId",
+  zValidator("param", paramsSchema, (result, c) => {
+    if (!result.success) {
+      return c.json({ error: "Invalid parameter" }, 400);
+    }
+  }),
+  async (c) => {
+    const { userId } = c.req.valid("param");
+
+    const response = await coreClient.api.users[":userId"].$get({
+      param: { userId },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return c.json(data, 400);
+    }
+
+    return c.json(data, 200);
+  }
+);
+
+export default app;
+```
+
+### 重要な注意事項
+
+1. **バリデーション**: BFF層でもZodバリデーションを実装し、不正なリクエストを早期にブロックする
+2. **エラーハンドリング**: coreからのエラーレスポンスをそのまま返却する
+3. **型安全性**: coreClientを使用することで、coreのAPI型が自動的に推論される
+4. **認証**: coreClientは自動的にAuthorizationヘッダーを付与する
+
+## 命名規則
+
+### フォルダ名・ファイル名
+
+- **キャメルケース**を使用する（小文字始まりで、単語の区切りは大文字）
+
+✅ **正しい**:
+- `getUser`
+- `storeUserName`
+- `updateUserName`
+
+❌ **間違い**:
+- `getuser` (全て小文字)
+- `GetUser` (パスカルケース)
+- `get_user` (スネークケース)
+
 ## まとめ
 
 - **データフロー**: ribon UI → ribon API Routes (BFF) → @repo/core (ドメインロジック) → データベース/外部サービス
