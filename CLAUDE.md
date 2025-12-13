@@ -260,3 +260,7 @@ app.post(
 
 - [Zod公式ドキュメント](https://zod.dev/)
 - [Zod v4 Migration Guide](https://zod.dev/v4/changelog)
+
+# BFFアーキテクチャ
+
+@docs/architecture/bff-pattern.md
