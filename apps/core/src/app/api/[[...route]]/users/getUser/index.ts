@@ -18,17 +18,8 @@ const app = new Hono().get(
   async (c) => {
     const { userId } = c.req.valid("param");
 
-    try {
-      const result = await getUser({ userId });
-      return c.json(result, 200);
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "ユーザーが存在しません") {
-          return c.json({ error: error.message }, 404);
-        }
-      }
-      return c.json({ error: "Internal server error" }, 500);
-    }
+    const result = await getUser({ userId });
+    return c.json(result, 200);
   },
 );
 
