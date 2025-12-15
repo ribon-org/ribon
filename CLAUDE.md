@@ -1,6 +1,9 @@
 # コミットメッセージの規約
 @docs/dev/commit-message.md
 
+# エラーハンドリング規約
+@docs/dev/error-handling.md
+
 # 環境変数の管理
 
 ## 重要なルール
