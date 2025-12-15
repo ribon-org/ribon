@@ -2,9 +2,9 @@
 
 import { useUser } from "@repo/auth/client";
 import { useEffect, useState } from "react";
-import ProfileView from "@repo/ui/components/ProfileView";
-import RegisterForm from "@repo/ui/components/ProfileRegisterForm";
-import EditForm from "@repo/ui/components/ProfileEditForm";
+import ProfileView from "@repo/ui/organisms/ProfileView";
+import RegisterForm from "@repo/ui/organisms/ProfileRegisterForm";
+import EditForm from "@repo/ui/organisms/ProfileEditForm";
 
 interface UserProfile {
   id: string;
