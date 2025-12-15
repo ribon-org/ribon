@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser, useSignOut } from "@repo/auth/client";
-import { Button } from "@repo/ui/components/button";
+import Button from "@repo/ui/atoms/Button";
 import Link from "next/link";
 
 export default function Home() {
