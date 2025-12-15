@@ -27,7 +27,8 @@ UpdateUserName) => {
     //   );
     // }
 
-    const existingUserName = await getUserNameByUserId(tx, userId);
+    // 内部IDを使用して既存のユーザー名を取得
+    const existingUserName = await getUserNameByUserId(tx, user.id);
     if (!existingUserName) {
       throw new Error("ユーザー名が存在しません");
     }
