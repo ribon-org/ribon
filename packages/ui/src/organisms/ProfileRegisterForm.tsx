@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Button from "./Button";
+import Button from "../atoms/Button";
 
 interface RegisterFormProps {
   userId: string;
