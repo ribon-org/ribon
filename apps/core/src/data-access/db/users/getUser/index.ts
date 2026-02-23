@@ -20,7 +20,9 @@ export async function getUser(db: PostgresJsDatabase, userId: string) {
         isNull(userNamesTable.deletedAt),
       ),
     )
-    .where(and(eq(usersTable.id, userId), isNull(usersTable.deletedAt)))
+    .where(
+      and(eq(usersTable.supabaseAuthId, userId), isNull(usersTable.deletedAt)),
+    )
     .limit(1);
 
   return result[0] || null;

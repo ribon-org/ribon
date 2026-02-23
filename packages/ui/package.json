@@ -3,7 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./components/*": "./src/components/*.tsx"
+    "./atoms": "./src/atoms/index.ts",
+    "./atoms/*": "./src/atoms/*.tsx",
+    "./molecules": "./src/molecules/index.ts",
+    "./molecules/*": "./src/molecules/*.tsx",
+    "./organisms": "./src/organisms/index.ts",
+    "./organisms/*": "./src/organisms/*.tsx",
+    "./templates": "./src/templates/index.ts",
+    "./templates/*": "./src/templates/*.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

@@ -23,13 +23,15 @@ export const storeUserName = async ({ userId, name }: StoreUserName) => {
     //   );
     // }
 
-    const existingUserName = await getUserNameByUserId(tx, userId);
+    // 内部IDを使用して既存のユーザー名をチェック
+    const existingUserName = await getUserNameByUserId(tx, user.id);
     if (existingUserName) {
       throw new Error("ユーザー名が既に存在します");
     }
 
+    // 内部IDを使用してユーザー名を保存
     const result = await storeUserNameFromDB(tx, {
-      userId,
+      userId: user.id,
       name,
     });
 
