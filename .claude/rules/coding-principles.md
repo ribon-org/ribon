@@ -16,64 +16,69 @@ Core coding rules to always follow.
 
 ## Early Return
 
-```python
-# Bad: Deep nesting
-def process(value):
-    if value is not None:
-        if value > 0:
-            return do_something(value)
-    return None
+```typescript
+// Bad: Deep nesting
+function process(value: number | null): Result | null {
+  if (value !== null) {
+    if (value > 0) {
+      return doSomething(value);
+    }
+  }
+  return null;
+}
 
-# Good: Early return
-def process(value):
-    if value is None:
-        return None
-    if value <= 0:
-        return None
-    return do_something(value)
+// Good: Early return
+function process(value: number | null): Result | null {
+  if (value === null) return null;
+  if (value <= 0) return null;
+  return doSomething(value);
+}
 ```
 
-## Type Hints Required
+## Type Annotations Required
 
 All functions must have type annotations:
 
-```python
-def call_llm(
-    prompt: str,
-    model: str = "gpt-4",
-    max_tokens: int = 1000
-) -> str:
-    ...
+```typescript
+function callLlm(
+  prompt: string,
+  model: string = "gpt-4",
+  maxTokens: number = 1000,
+): Promise<string> {
+  // ...
+}
 ```
 
 ## Immutability
 
 Create new objects instead of mutating existing ones:
 
-```python
-# Bad: Mutating existing object
-data["new_key"] = value
+```typescript
+// Bad: Mutating existing object
+data.newKey = value;
 
-# Good: Creating new object
-new_data = {**data, "new_key": value}
+// Good: Creating new object
+const newData = { ...data, newKey: value };
 ```
 
 ## Naming Conventions
 
-- **Variables/Functions**: snake_case (English)
-- **Classes**: PascalCase (English)
+- **Variables/Functions**: camelCase (English)
+- **Types/Interfaces/Classes**: PascalCase (English)
 - **Constants**: UPPER_SNAKE_CASE (English)
-- **Meaningful names**: `user_count` over `x`
+- **Meaningful names**: `userCount` over `x`
 
 ## No Magic Numbers
 
-```python
-# Bad
-if retry_count > 3:
-    ...
+```typescript
+// Bad
+if (retryCount > 3) {
+  // ...
+}
 
-# Good
-MAX_RETRIES = 3
-if retry_count > MAX_RETRIES:
-    ...
+// Good
+const MAX_RETRIES = 3;
+if (retryCount > MAX_RETRIES) {
+  // ...
+}
 ```
