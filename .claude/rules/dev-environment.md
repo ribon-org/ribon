@@ -2,153 +2,140 @@
 
 Project development environment and toolchain.
 
-## Package Management: uv
+## Package Management: Bun
 
-**Do not use pip directly. All commands must go through uv.**
+**All commands must go through bun. Do not use npm/yarn/pnpm.**
 
 ```bash
-# Add packages
-uv add <package>
-uv add --dev <package>    # Dev dependency
+# Install all dependencies
+bun install
 
-# Sync dependencies
-uv sync
+# Add packages
+bun add <package>
+bun add -D <package>    # Dev dependency
+
+# Add to specific workspace
+bun add <package> --filter <workspace>
 
 # Run scripts
-uv run <command>
-uv run python script.py
-uv run pytest
+bun run <script>
 ```
 
-### pyproject.toml
+### Monorepo Structure
 
-Manage dependencies in `pyproject.toml`:
-
-```toml
-[project]
-dependencies = [
-    "httpx>=0.27",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "ruff>=0.8",
-]
+```
+ribon/
+├── apps/
+│   ├── core/       # @repo/core — BFF API (Next.js + Hono + Drizzle)
+│   └── ribon/      # @repo/ribon — Frontend (Next.js + Tailwind + DaisyUI)
+├── packages/
+│   ├── ui/         # @repo/ui — Shared UI components
+│   ├── auth/       # @repo/auth — Supabase Auth
+│   ├── eslint-config/       # @repo/eslint-config — Shared ESLint config
+│   └── typescript-config/   # @repo/typescript-config — Shared TS config
+├── package.json    # Root (workspaces: apps/*, packages/*)
+└── turbo.json      # Turborepo task definitions
 ```
 
-## Linting & Formatting: ruff
+## Task Runner: Turborepo
+
+All tasks are run via Turborepo from the project root:
 
 ```bash
-# Check
-uv run ruff check .
+# Development server (all apps)
+bun run dev
 
-# Auto-fix
-uv run ruff check --fix .
+# Build
+bun run build
+
+# Lint
+bun run lint
+
+# Type check
+bun run check-types
 
 # Format
-uv run ruff format .
+bun run format
 ```
 
-### ruff Configuration (pyproject.toml)
+### turbo.json Task Configuration
 
-```toml
-[tool.ruff]
-target-version = "py311"
-line-length = 88
+| Task | Dependencies | Cache | Notes |
+|------|-------------|-------|-------|
+| `build` | `^build` | Yes | Reads `.env*`, outputs `.next/**` |
+| `dev` | — | No | Persistent (long-running) |
+| `lint` | `^lint` | Yes | |
+| `check-types` | `^check-types` | Yes | |
 
-[tool.ruff.lint]
-select = [
-    "E",      # pycodestyle errors
-    "W",      # pycodestyle warnings
-    "F",      # pyflakes
-    "I",      # isort
-    "B",      # flake8-bugbear
-    "UP",     # pyupgrade
-]
-ignore = ["E501"]  # line too long (formatter handles)
+## Linting: ESLint 9
 
-[tool.ruff.format]
-quote-style = "double"
-```
+ESLint 9 flat config with shared presets in `@repo/eslint-config`:
 
-## Type Checking: ty
+| Preset | Used by | Base |
+|--------|---------|------|
+| `base.js` | All packages | `@eslint/js` + `typescript-eslint` + `eslint-config-prettier` |
+| `next-js` | `apps/core`, `apps/ribon` | base + `@next/eslint-plugin-next` + React plugins |
+| `react-internal` | `packages/ui` | base + React plugins |
 
 ```bash
-# Run type check
-uv run ty check src/
+# Run lint (via Turbo)
+bun run lint
 ```
 
-### ty Features
+## Formatting: Prettier
 
-- Fast Rust-based type checker (by Astral)
-- Same ecosystem as ruff / uv
-- mypy-compatible type annotations
-
-## Notebooks: marimo
-
-Interactive Python notebook environment.
+Prettier with default settings (no config file).
 
 ```bash
-# Create/edit notebook
-uv run marimo edit notebook.py
-
-# Run notebook (CLI)
-uv run marimo run notebook.py
-
-# Deploy as app
-uv run marimo run notebook.py --host 0.0.0.0 --port 8080
+# Format all files
+bun run format
+# → prettier --write "**/*.{ts,tsx,md}"
 ```
 
-### marimo Features
+`eslint-config-prettier` is integrated into ESLint to disable conflicting rules.
 
-- **Pure Python files** (.py): Git-friendly
-- **Reactive**: Auto-tracks cell dependencies
-- **Reproducible**: No execution order dependency
+## Type Checking: TypeScript
 
-### marimo Best Practices
+TypeScript 5.9.2 with shared presets in `@repo/typescript-config`:
 
-```python
-# Bad: Mutating global state
-data = []
-def add_item(item):
-    data.append(item)  # Side effect
-
-# Good: Pure function
-def add_item(data: list, item) -> list:
-    return [*data, item]
-```
-
-## Task Runner
-
-Manage multiple tool executions in `pyproject.toml` scripts or poe:
-
-```toml
-[tool.poe.tasks]
-lint = "ruff check . && ruff format --check ."
-format = "ruff check --fix . && ruff format ."
-typecheck = "ty check src/"
-test = "pytest -v"
-all = ["lint", "typecheck", "test"]
-```
-
-## Common Commands
+| Preset | Used by | Key settings |
+|--------|---------|-------------|
+| `base.json` | Foundation | ES2022, strict, NodeNext |
+| `nextjs.json` | `apps/core`, `apps/ribon` | ESNext module, Bundler resolution, jsx preserve |
+| `react-library.json` | `packages/ui`, `packages/auth` | jsx react-jsx |
 
 ```bash
-# Initialize
-uv init
-uv venv
-source .venv/bin/activate
-
-# Install dev dependencies
-uv sync --all-extras
-
-# Quality check (all)
-uv run ruff check . && uv run ruff format --check . && uv run ty check src/ && uv run pytest
-
-# Or via poe
-poe all
+# Type check (via Turbo)
+bun run check-types
 ```
+
+## Database: Drizzle ORM
+
+PostgreSQL + Drizzle ORM + Drizzle Kit (in `apps/core`).
+
+```bash
+# Generate migration from schema changes
+cd apps/core
+bun run db:generate --name <migration_name>
+
+# Apply migrations
+bun run db:migrate
+
+# Drop migration
+bun run db:drop
+
+# Reset (drop + migrate)
+bun run db:reset
+```
+
+| Item | Path |
+|------|------|
+| Drizzle config | `apps/core/drizzle.config.ts` |
+| Schemas | `apps/core/db/schemas/*.ts` |
+| Migrations | `apps/core/db/migrations/` |
+| DB client | `apps/core/db/client/` |
+
+Migration naming rules are in `.claude/rules/database-schema.md`.
 
 ## Environment Variables
 
@@ -163,16 +150,39 @@ When adding or removing environment variables in `.env.local` or `.env`, update 
 ```json
 {
   "tasks": {
-    "@repo/core": {
-      "env": ["POSTGRES_URL"]
+    "@repo/core#build": {
+      "env": ["POSTGRES_URL", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_KEY"]
     }
   }
 }
 ```
 
+## Common Commands
+
+```bash
+# Install dependencies
+bun install
+
+# Development
+bun run dev
+
+# Quality check
+bun run lint && bun run check-types
+
+# Build
+bun run build
+
+# Format
+bun run format
+
+# Database (from apps/core)
+cd apps/core
+bun run db:generate --name <name>
+bun run db:migrate
+```
+
 ## Pre-commit Checklist
 
-- [ ] `uv run ruff check .` passes
-- [ ] `uv run ruff format --check .` passes
-- [ ] `uv run ty check src/` passes
-- [ ] `uv run pytest` passes
+- [ ] `bun run lint` passes
+- [ ] `bun run check-types` passes
+- [ ] `bun run build` passes
