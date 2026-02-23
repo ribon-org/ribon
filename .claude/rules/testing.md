@@ -12,28 +12,32 @@ Guidelines for writing tests.
 
 ### AAA Pattern
 
-```python
-def test_user_creation():
-    # Arrange
-    user_data = {"name": "Alice", "email": "alice@example.com"}
+```typescript
+it("should create a user with valid data", () => {
+  // Arrange
+  const userData = { name: "Alice", email: "alice@example.com" };
 
-    # Act
-    user = create_user(user_data)
+  // Act
+  const user = createUser(userData);
 
-    # Assert
-    assert user.name == "Alice"
-    assert user.email == "alice@example.com"
+  // Assert
+  expect(user.name).toBe("Alice");
+  expect(user.email).toBe("alice@example.com");
+});
 ```
 
 ### Naming Convention
 
-```python
-# test_{target}_{condition}_{expected_result}
-def test_create_user_with_valid_data_returns_user():
-    ...
+```typescript
+describe("createUser", () => {
+  it("should return user when given valid data", () => {
+    // ...
+  });
 
-def test_create_user_with_invalid_email_raises_error():
-    ...
+  it("should throw error when given invalid email", () => {
+    // ...
+  });
+});
 ```
 
 ## Test Case Coverage
@@ -43,58 +47,76 @@ For each feature, consider:
 1. **Happy path**: Basic functionality
 2. **Boundary values**: Min, max, empty
 3. **Error cases**: Invalid input, error conditions
-4. **Edge cases**: None, empty string, special characters
+4. **Edge cases**: null, undefined, empty string, special characters
 
 ## Mocking
 
 Mock external dependencies:
 
-```python
-from unittest.mock import Mock, patch
+```typescript
+import { vi } from "vitest";
 
-@patch("module.external_api_call")
-def test_with_mocked_api(mock_api):
-    mock_api.return_value = {"status": "ok"}
-    result = function_under_test()
-    assert result == expected
+vi.mock("@/lib/api", () => ({
+  externalApiCall: vi.fn(),
+}));
+
+it("should handle API response", async () => {
+  const mockApi = vi.mocked(externalApiCall);
+  mockApi.mockResolvedValue({ status: "ok" });
+
+  const result = await functionUnderTest();
+  expect(result).toEqual(expected);
+});
 ```
 
-## Fixtures
+## Setup / Teardown
 
-Common setup goes in `conftest.py`:
+Common setup goes in `beforeEach` or factory functions:
 
-```python
-# tests/conftest.py
-import pytest
+```typescript
+// Factory function pattern
+function createSampleUser(overrides?: Partial<User>): User {
+  return {
+    name: "Test",
+    email: "test@example.com",
+    ...overrides,
+  };
+}
 
-@pytest.fixture
-def sample_user():
-    return User(name="Test", email="test@example.com")
+// Setup / teardown pattern
+describe("database operations", () => {
+  let db: Database;
 
-@pytest.fixture
-def db_session():
-    session = create_session()
-    yield session
-    session.rollback()
+  beforeEach(async () => {
+    db = await createTestDatabase();
+  });
+
+  afterEach(async () => {
+    await db.rollback();
+  });
+});
 ```
 
 ## Commands
 
 ```bash
 # All tests
-uv run pytest -v
+bun run test
 
 # Specific file
-uv run pytest tests/test_user.py -v
+bunx vitest run src/user.test.ts
 
-# Specific test
-uv run pytest tests/test_user.py::test_create_user -v
+# Specific test by name
+bunx vitest run -t "should create user"
 
 # With coverage
-uv run pytest --cov=src --cov-report=term-missing
+bunx vitest run --coverage
+
+# Watch mode
+bunx vitest
 
 # Stop on first failure
-uv run pytest -x
+bunx vitest run --bail 1
 ```
 
 ## Checklist
