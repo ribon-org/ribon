@@ -19,15 +19,16 @@
 packages/ui/src/
 ├── atoms/              # 原子: 最小単位のコンポーネント
 │   ├── Button.tsx      # daisyUIの btn をラップ
-│   ├── Input.tsx       # daisyUIの input をラップ
-│   ├── Label.tsx       # daisyUIの label をラップ
-│   ├── Alert.tsx       # daisyUIの alert をラップ
 │   ├── Card.tsx        # daisyUIの card をラップ
+│   ├── Code.tsx        # コード表示コンポーネント
+│   ├── Input.tsx       # (planned) daisyUIの input をラップ
+│   ├── Label.tsx       # (planned) daisyUIの label をラップ
+│   ├── Alert.tsx       # (planned) daisyUIの alert をラップ
 │   └── index.ts        # 一括エクスポート
 │
-├── molecules/          # 分子: 複数のatomsを組み合わせ
-│   ├── FormField.tsx   # Label + Input の組み合わせ
-│   ├── AlertMessage.tsx # Alert + アイコン/閉じるボタン
+├── molecules/          # 分子: 複数のatomsを組み合わせ (planned)
+│   ├── FormField.tsx   # (planned) Label + Input の組み合わせ
+│   ├── AlertMessage.tsx # (planned) Alert + アイコン/閉じるボタン
 │   └── index.ts
 │
 ├── organisms/          # 有機体: 機能的なコンポーネント
@@ -36,7 +37,7 @@ packages/ui/src/
 │   ├── ProfileRegisterForm.tsx
 │   └── index.ts
 │
-└── templates/          # テンプレート: ページレイアウト
+└── templates/          # テンプレート: ページレイアウト (planned)
     └── index.ts
 ```
 
@@ -47,7 +48,7 @@ packages/ui/src/
 - **daisyUIの基本コンポーネントを直接ラップ**
 - 単一の責務を持つ
 - 他のコンポーネントに依存しない
-- 例: Button, Input, Label, Alert, Card
+- 例: Button, Card, Code (実装済み) / Input, Label, Alert (planned)
 
 **配置基準:**
 - daisyUIのコンポーネントクラス（btn, input, card など）を使用
@@ -143,7 +144,7 @@ const ProfileEditForm = ({ userId, onSuccess }) => {
 
 1. **汎用的なUIコンポーネント**
    - ボタン、カード、モーダル、フォーム要素など
-   - 例: `Button.tsx`, `Card.tsx`, `Input.tsx`
+   - 例: `Button.tsx`, `Card.tsx`, `Code.tsx`
 
 2. **特定の機能を持つが再利用可能なコンポーネント**
    - プロフィール表示/編集フォーム
@@ -409,7 +410,7 @@ export default ProfileView;
 
 ### 配置の原則
 
-- ✅ **Atoms**: daisyUIの基本コンポーネントをラップ（Button, Input, Card など）
+- ✅ **Atoms**: daisyUIの基本コンポーネントをラップ（Button, Card, Code が実装済み。Input, Label, Alert は planned）
 - ✅ **Molecules**: 複数のAtomsを組み合わせ（FormField, CardHeader など）
 - ✅ **Organisms**: 機能的なコンポーネント（ProfileView, ProfileEditForm など）
 - ✅ **Templates**: ページレイアウト（将来用）

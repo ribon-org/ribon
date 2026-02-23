@@ -39,7 +39,7 @@
 
 ```bash
 codex exec \
-  --model gpt-5-codex \
+  --model gpt-5.3-codex \
   --config model_reasoning_effort="high" \
   --sandbox read-only \
   --full-auto \
@@ -57,7 +57,7 @@ codex exec \
 
 ```bash
 codex exec \
-  --model gpt-5-codex \
+  --model gpt-5.3-codex \
   --config model_reasoning_effort="high" \
   --sandbox read-only \
   --full-auto \
@@ -79,7 +79,7 @@ codex exec \
 
 ```bash
 codex exec \
-  --model gpt-5-codex \
+  --model gpt-5.3-codex \
   --config model_reasoning_effort="xhigh" \
   --sandbox read-only \
   --full-auto \
@@ -103,7 +103,7 @@ codex exec \
 
 ```bash
 codex exec \
-  --model gpt-5-codex \
+  --model gpt-5.3-codex \
   --config model_reasoning_effort="xhigh" \
   --sandbox read-only \
   --full-auto \

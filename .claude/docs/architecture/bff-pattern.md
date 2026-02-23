@@ -101,36 +101,33 @@ ribon (API Routes - BFF)
 ```
 
 **実装例:**
-```typescript
-// apps/ribon/src/hooks/useCompanies.ts
-"use client";
 
-import useSWR from "swr";
-
-export function useCompanies() {
-  return useSWR("/api/companies", async (url) => {
-    const res = await fetch(url, { credentials: "include" });
-    return res.json();
-  });
-}
-```
+> 注: 現在実装済みのビジネスロジックAPIは `/api/users` のみです。
+> 以下はcoreClientを使用した実際のパターンに基づく例です。
 
 ```typescript
-// apps/ribon/src/app/api/companies/route.ts
-import { listCompanies } from "@repo/core/usecases/companies";
-import { NextResponse } from "next/server";
+// apps/ribon/src/app/api/[[...route]]/users/getUser/index.ts
+// BFF層: coreClientを使って@repo/coreのAPIを型安全に呼び出す
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+import { coreClient } from "../../../../../lib/coreClient";
 
-export async function GET() {
-  try {
-    const companies = await listCompanies();
-    return NextResponse.json(companies);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch companies" },
-      { status: 500 }
-    );
+const app = new Hono().get(
+  "/:userId",
+  zValidator("param", z.object({ userId: z.uuid() })),
+  async (c) => {
+    const { userId } = c.req.valid("param");
+    const response = await coreClient.api.users[":userId"].$get({
+      param: { userId },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return c.json(data, 400);
+    }
+    return c.json(data, 200);
   }
-}
+);
 ```
 
 ## アーキテクチャ図
@@ -156,8 +153,8 @@ export async function GET() {
 │  │                                       │                     │  │
 │  │  ┌─────────────────┐                  │                     │  │
 │  │  │ API Routes      │                  │                     │  │
-│  │  │ /api/companies  │                  │                     │  │
-│  │  │ /api/projects   │                  │                     │  │
+│  │  │ /api/users      │                  │                     │  │
+│  │  │                 │                  │                     │  │
 │  │  └────────┬────────┘                  │                     │  │
 │  │           │                           │                     │  │
 │  └───────────┼───────────────────────────┼─────────────────────┘  │
@@ -238,20 +235,20 @@ const { user } = useUser();
 #### ビジネスロジック（フロントエンド）
 ```typescript
 // ✅ ribonのAPI Routes（BFF）を呼び出し
-const response = await fetch("/api/companies", {
+const response = await fetch("/api/users/${userId}", {
   credentials: "include"
 });
 ```
 
 #### ビジネスロジック（BFF層）
 ```typescript
-// ✅ @repo/coreのドメインロジックを使用
-import { listCompanies } from "@repo/core/usecases/companies";
+// ✅ coreClientを使って@repo/coreのAPIを型安全に呼び出す
+import { coreClient } from "../../../../../lib/coreClient";
 
-export async function GET() {
-  const companies = await listCompanies();
-  return NextResponse.json(companies);
-}
+const response = await coreClient.api.users[":userId"].$get({
+  param: { userId },
+});
+const data = await response.json();
 ```
 
 ### DON'T: 避けるべきこと
@@ -259,8 +256,8 @@ export async function GET() {
 #### フロントエンドから直接ドメインロジックを呼び出す
 ```typescript
 // ❌ UI ComponentやHooksから@repo/coreを直接呼び出し
-import { listCompanies } from "@repo/core/usecases/companies";
-const companies = await listCompanies();
+import { getUser } from "@repo/core/actions/getUser";
+const user = await getUser({ userId });
 ```
 
 #### クライアント側での直接的なSupabase呼び出し

@@ -27,7 +27,7 @@ bun run <script>
 ribon/
 ├── apps/
 │   ├── core/       # @repo/core — BFF API (Next.js + Hono + Drizzle)
-│   └── ribon/      # @repo/ribon — Frontend (Next.js + Tailwind + DaisyUI)
+│   └── ribon/      # @repo/ribon — BFF + Frontend (Next.js + Hono + Tailwind)
 ├── packages/
 │   ├── ui/         # @repo/ui — Shared UI components
 │   ├── auth/       # @repo/auth — Supabase Auth

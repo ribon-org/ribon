@@ -1,5 +1,7 @@
 # Testing Rules
 
+> **Note**: The test infrastructure (vitest, test scripts) is not yet set up in this project. These rules define the standards to follow when the test environment is established.
+
 Guidelines for writing tests.
 
 ## Core Principles

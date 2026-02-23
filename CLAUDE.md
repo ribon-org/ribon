@@ -156,12 +156,13 @@ Claude Code (Opus 4.6) のコンテキストは **200K トークン**（実質 *
 
 | Location | Content |
 |----------|---------|
-| `.claude/rules/` | コーディング・セキュリティ・言語・開発プロセスルール |
-| `.claude/docs/DESIGN.md` | 設計決定の記録 |
+| `.claude/rules/` | Claude の行動規則（コーディング・AI委譲・ワークフロー） |
+| `.claude/specs/` | プロダクト仕様（機能仕様・ドメインモデル） |
+| `.claude/docs/DESIGN.md` | AIシステム設計決定の記録 |
 | `.claude/docs/architecture/` | アーキテクチャ設計ドキュメント（BFF, Core, UI, エラーハンドリング詳細） |
 | `.claude/docs/libraries/` | ライブラリ制約ドキュメント |
-| `.claude/docs/research/` | 調査結果（サブエージェント / レビュー） |
-| `.claude/logs/cli-tools.jsonl` | Codex/Gemini入出力ログ |
+| `.claude/docs/research/` | 調査結果（一時アーティファクト） |
+| `.claude/logs/` | Codex/Gemini入出力ログ（gitignored） |
 
 ---
 

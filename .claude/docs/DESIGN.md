@@ -55,7 +55,19 @@ Claude Code Orchestra is a multi-agent collaboration framework. Claude Code (200
 | Library | Role | Version | Notes |
 |---------|------|---------|-------|
 | Codex CLI | Planning, design, complex code | gpt-5.3-codex | Architecture, planning, debug, complex implementation |
-| Gemini CLI | Multimodal file reading | gemini-3-pro | PDF/video/audio/image extraction ONLY |
+| Gemini CLI | Codebase analysis, research, multimodal reading | gemini-3-pro | 1M context: codebase analysis + external research + PDF/video/audio/image extraction |
+
+### Trigger Classification
+
+| Type | Action | Who Initiates |
+|------|--------|--------------|
+| **Automatic** | Codex CLI call | Claude (judgment flow) |
+| **Automatic** | Gemini CLI call | Claude (judgment flow) |
+| **Automatic** | Subagent delegation (Task tool) | Claude (output size / context) |
+| **Automatic** | Multimodal file delegation | Claude (file extension detection) |
+| **Manual** | `/startproject` | User (slash command) |
+| **Manual** | `/team-implement` | User (slash command) |
+| **Manual** | `/team-review` | User (slash command) |
 
 ### Key Decisions
 

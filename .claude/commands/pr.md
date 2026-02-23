@@ -6,7 +6,7 @@ model: haiku
 
 現在のブランチ名からJiraチケット番号を取得し、Jiraからタスク情報を取得してPRを作成してください。
 
-対象リポジトリ: https://github.com/ribon-org/ribon
+対象リポジトリ: https://github.com/nikawa2161/ribon
 対象Jira: https://nikawa2161t.atlassian.net
 
 ## 実行手順
@@ -39,7 +39,7 @@ model: haiku
 ### 5. PRの作成
 
 `gh pr create` コマンドを使用してPRを作成:
-- **リポジトリ**: `ribon-org/ribon`
+- **リポジトリ**: `nikawa2161/ribon`
 - **ベースブランチ**: `main`
 - **タイトル**: Jiraタスクのタイトル、または生成したタイトル
 - **本文**: テンプレートに基づいて生成した内容（HEREDOCを使用）
