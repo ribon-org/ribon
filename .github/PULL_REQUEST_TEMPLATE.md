@@ -1,8 +1,8 @@
 ## チケットへのリンク
 
-<!-- チケットの番号を追加(RIBON-チケット番号) -->
+<!-- チケットの番号を追加(RIBBON-チケット番号) -->
 
-- [該当チケット](https://nikawa2161t.atlassian.net/browse/RIBON-番号)
+- [該当チケット](https://nikawa2161t.atlassian.net/browse/RIBBON-番号)
 
 ## やったこと
 
