@@ -35,6 +35,8 @@ yarn-error.log*
 
 # Claude Code
 .claude/plans/
+.claude/checkpoints/
+.claude/logs/
 
 # Misc
 .DS_Store

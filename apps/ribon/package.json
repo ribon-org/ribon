@@ -6,12 +6,14 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@repo/ui": "workspace:*",
     "@repo/core": "workspace:*",
     "@repo/auth": "workspace:*",
+    "hono": "^4.10.8",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "next": "16.0.10"
