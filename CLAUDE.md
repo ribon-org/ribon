@@ -144,9 +144,9 @@ Claude Code (Opus 4.6) のコンテキストは **200K トークン**（実質 *
 
 ## Tech Stack
 
-- **Python** / **uv** (pip禁止)
-- **ruff** (lint/format) / **ty** (type check) / **pytest**
-- `poe lint` / `poe test` / `poe all`
+- **TypeScript** / **Bun** (npm/yarn/pnpm 禁止)
+- **ESLint 9** (lint) / **Prettier** (format) / **TypeScript** (type check)
+- `bun run lint` / `bun run check-types` / `bun run build`
 
 → 詳細: `.claude/rules/dev-environment.md`
 
