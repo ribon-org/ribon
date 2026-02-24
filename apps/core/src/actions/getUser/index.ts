@@ -10,7 +10,7 @@ export const getUser = async ({ userId }: GetUser) => {
   return await transactionDB.transaction(async (tx: PostgresJsDatabase) => {
     const user = await getUserFromDB(tx, userId);
     if (!user) {
-      throw new Error("ユーザーが存在しません");
+      throw new Error("User not found");
     }
 
     return {

@@ -17,20 +17,19 @@ UpdateUserName) => {
   return await transactionDB.transaction(async (tx) => {
     const user = await getUserById(tx, userId);
     if (!user) {
-      throw new Error("ユーザーが存在しません");
+      throw new Error("User not found");
     }
 
-    // TODO: 認証ユーザーのチェックを追加
+    // TODO: Add authenticated user check
     // if (user.supabaseAuthId !== authUserId) {
     //   throw new Error(
     //     "Forbidden: You don't have permission to update this user's name",
     //   );
     // }
 
-    // 内部IDを使用して既存のユーザー名を取得
     const existingUserName = await getUserNameByUserId(tx, user.id);
     if (!existingUserName) {
-      throw new Error("ユーザー名が存在しません");
+      throw new Error("User name not found");
     }
 
     const result = await updateUserNameRecord(tx, {
@@ -39,7 +38,7 @@ UpdateUserName) => {
     });
 
     if (!result) {
-      throw new Error("ユーザー名の更新に失敗しました");
+      throw new Error("Failed to update user name");
     }
 
     return {

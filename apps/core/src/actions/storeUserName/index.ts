@@ -13,30 +13,28 @@ export const storeUserName = async ({ userId, name }: StoreUserName) => {
   return await transactionDB.transaction(async (tx) => {
     const user = await getUserById(tx, userId);
     if (!user) {
-      throw new Error("ユーザーが存在しません");
+      throw new Error("User not found");
     }
 
-    // TODO: 認証ユーザーのチェックを追加
+    // TODO: Add authenticated user check
     // if (user.supabaseAuthId !== authUserId) {
     //   throw new Error(
     //     "Forbidden: You don't have permission to register this user's name",
     //   );
     // }
 
-    // 内部IDを使用して既存のユーザー名をチェック
     const existingUserName = await getUserNameByUserId(tx, user.id);
     if (existingUserName) {
-      throw new Error("ユーザー名が既に存在します");
+      throw new Error("User name already exists");
     }
 
-    // 内部IDを使用してユーザー名を保存
     const result = await storeUserNameFromDB(tx, {
       userId: user.id,
       name,
     });
 
     if (!result) {
-      throw new Error("ユーザー名の登録に失敗しました");
+      throw new Error("Failed to store user name");
     }
 
     return {
