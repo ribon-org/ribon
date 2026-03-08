@@ -1,0 +1,24 @@
+name: "調査・検証"
+description: "調査や技術検証を行う"
+labels: ["type/spike"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: "調査事項"
+      description: "何を調査・検証するか"
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: "ゴール"
+      description: "調査完了の条件（ドキュメント、PoC等）"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: "背景・参考情報"
+    validations:
+      required: false
