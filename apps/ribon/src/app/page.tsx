@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser, useSignOut } from "@repo/auth/client";
-import { Button } from "@repo/ui/components/button";
+import Button from "@repo/ui/atoms/Button";
 import Link from "next/link";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
   }
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <Button appName="Ribon">Click me</Button>
+      <Button>Click me</Button>
       <br />
 
       {user ? (

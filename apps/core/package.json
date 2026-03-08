@@ -3,23 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "check-types": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:drop": "drizzle-kit drop",
     "db:reset": "bun run db:drop && bun run db:migrate"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.5",
     "drizzle-orm": "^0.44.7",
+    "hono": "^4.10.8",
     "postgres": "^3.4.7",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "next": "16.0.1"
   },
   "devDependencies": {
+    "@repo/auth": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

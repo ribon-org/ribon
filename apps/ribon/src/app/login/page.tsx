@@ -19,7 +19,7 @@ export default function LoginPage() {
     });
 
     if (!error && user) {
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     }
   };

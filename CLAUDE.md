@@ -1,143 +1,172 @@
-# 環境変数の管理
+# Claude Code Orchestra
 
-## 重要なルール
+**マルチエージェント協調フレームワーク（Opus 4.6 + Agent Teams 対応）**
 
-新しい環境変数を`.env.local`や`.env`ファイルに追加または削除する際は、`turbo.json`のキャッシュキーに含める必要があります。
+Claude Code が全体統括し、Codex CLI（計画・難実装）と Gemini CLI（1M context 活用）を使い分ける。
 
-## 理由
+---
 
-環境変数の変更がTurborepoのキャッシュキーに含まれていないと、環境変数の値が変わってもキャッシュが無効化されず、古いビルド結果が使用されてしまう可能性があります。
+## Agent Roles — 役割分担
 
-## 手順
+| Agent | Model | Role | Use For |
+|-------|-------|------|---------|
+| **Claude Code（メイン）** | Opus 4.6 | 全体統括 | ユーザー対話、タスク管理、簡潔なコード編集 |
+| **general-purpose（サブエージェント）** | **Opus** | 実装・Codex委譲 | コード実装、Codex委譲、ファイル操作 |
+| **codex-debugger（サブエージェント）** | **Opus** | エラー解析 | Codex CLI でエラーの根本原因分析・修正提案 |
+| **gemini-explore（サブエージェント）** | **Opus** | 大規模分析・調査 | コードベース理解、外部リサーチ、マルチモーダル読取（1M context） |
+| **Agent Teams チームメイト** | **Opus**（デフォルト） | 並列協調 | /startproject, /team-implement, /team-review |
+| **Codex CLI** | gpt-5.3-codex | 計画・難しい実装 | アーキテクチャ設計、実装計画、複雑なコード実装 |
+| **Gemini CLI** | gemini-3-pro | 1M context エージェント | コードベース分析、リサーチ、マルチモーダル読取 |
 
-1. `.env.local`または`.env`ファイルに環境変数を追加/削除
-2. `turbo.json`を開く
-3. 該当するタスク（例: `@repo/core`）の`env`配列に環境変数名を追加
+### 判断フロー
 
-### 例
-
-**turbo.json**
-
-```json
-{
-  "tasks": {
-    "@repo/core": {
-      "env": ["POSTGRES_URL"]
-    }
-  }
-}
+```
+タスク受信
+  ├── マルチモーダルファイル（PDF/動画/音声/画像）がある？
+  │     → YES: Gemini にファイルを渡して内容抽出
+  │
+  ├── コードベース全体の理解・大規模分析が必要？
+  │     → YES: Gemini に委譲（1M context 活用）
+  │
+  ├── 外部情報・リサーチ・サーベイが必要？
+  │     → YES: Gemini に委譲（Google Search grounding 活用）
+  │
+  ├── 計画・設計・難しいコードが必要？
+  │     → YES: Codex に相談 or 実装させる
+  │
+  └── 通常のコード実装？
+        → メインが直接 or サブエージェントに委託
 ```
 
-# データベーススキーマの管理
+---
 
-## スキーマファイルの命名規則
+## Quick Reference
 
-新しいテーブルのスキーマを作成する場合は、以下の命名規則に従ってください：
+### Codex を使う時
 
-- ファイル名：`テーブル名Table.ts`（テーブル名はキャメルケース）
-- 例：`usersTable.ts`, `postsTable.ts`, `userProfilesTable.ts`
+- **計画・設計**（「どう実装？」「アーキテクチャ」「計画を立てて」）
+- **難しいコード実装**（複雑なアルゴリズム、最適化、マルチステップ実装）
+- **デバッグ**（「なぜ動かない？」「エラーの原因は？」）
+- **比較検討**（「AとBどちらがいい？」「トレードオフは？」）
 
-## マイグレーションファイルの命名規則
+→ 詳細: `.claude/rules/codex-delegation.md`
 
-### テーブルの新規作成
+### Gemini を使う時
 
-- ファイル名：`timestamp_create_テーブル名.sql`（テーブル名はスネークケース）
-- 例：`20240101120000_create_users.sql`, `20240101120000_create_user_profiles.sql`
+Gemini CLI は **1M トークンのコンテキスト**を持ち、以下の3つの役割を担う:
 
-### テーブルの変更
+- **マルチモーダルファイル読取（必須・自動委譲）**
+  - PDF、動画、音声、画像ファイルが登場したら自動で Gemini に渡す
+  ```bash
+  gemini -p "{抽出したい情報}" < /path/to/file 2>/dev/null
+  ```
+- **コードベース・リポジトリ理解**
+  - プロジェクト全体の構造分析、パターン把握、依存関係の理解
+  - メインの 200K コンテキストでは収まらない大規模分析を委譲
+  ```bash
+  gemini -p "Analyze this codebase: structure, key modules, patterns, dependencies" 2>/dev/null
+  ```
+- **外部リサーチ・サーベイ**
+  - 最新ドキュメント調査、ライブラリ比較、ベストプラクティス調査
+  - Gemini の Google Search grounding を活用
+  ```bash
+  gemini -p "Research: {topic}. Find latest best practices, constraints, and recommendations" 2>/dev/null
+  ```
 
-- ファイル名：`timestamp_操作_table名_カラム名.sql`
-- 操作：`add`, `drop`, `rename` など
-- 例：
-  - `20240101120000_add_users_email.sql`
-  - `20240101120000_drop_posts_title.sql`
-  - `20240101120000_rename_users_name_to_full_name.sql`
+> スクリーンショットの単純確認は Claude の Read ツールで直接可能。
 
-### トリガーやファンクションの作成
+→ 詳細: `.claude/rules/gemini-delegation.md`
 
-- ファイル名：何をしているかわかるように命名
-- 例：
-  - `20240101120000_create_function_update_timestamp.sql`
-  - `20240101120000_create_trigger_users_update.sql`
+### サブエージェントを使う時
 
-## マイグレーションファイルの作成手順
+- **コード実装**（メインのコンテキストを節約したい場合）
+- **Codex 委譲**（計画・設計の相談をサブエージェント経由で）
+- **調査結果の整理** → `.claude/docs/research/` に保存
 
-### 手順
+---
 
-1. **スキーマファイルを作成または変更**
-   - `apps/core/db/schemas/`ディレクトリに`テーブル名Table.ts`を作成
-   - 例：`usersTable.ts`, `postsTable.ts`
+## Context Management
 
-2. **マイグレーションファイルを生成**
-   - コマンド：`bun run db:generate --name 操作名`
-   - `--name`オプションで命名規則に従った名前を指定
+Claude Code (Opus 4.6) のコンテキストは **200K トークン**（実質 **140-150K**、ツール定義等で縮小）。
+> ※ API pay-as-you-go (Tier 4+) では 1M Beta が利用可能。
 
-3. **生成されるファイル名の形式**
-   - `YYYYMMDDHHmmss_指定した名前.sql`
-   - 例：`20251124071741_create_users.sql`
+**Compaction 機能**により、長時間セッションでもサーバーサイドで自動要約される。
 
-### 例
+**Gemini CLI は 1M トークン**のコンテキストを持つため、大規模分析・調査は Gemini に委譲する。
 
-**テーブル作成の場合：**
+### モデル選択方針
 
-```bash
-bun run db:generate --name create_users
-# → 20251124071741_create_users.sql が生成される
+| エージェント | モデル | 理由 |
+|------------|--------|------|
+| general-purpose | **Opus** | 高い推論能力でコード実装・Codex委譲を高品質に実行 |
+| codex-debugger | **Opus** | エラー解析には高い推論能力が必要。Codex への的確な質問生成に強い |
+| gemini-explore | **Opus** | Gemini CLI（1M context）を活用した大規模分析・調査・マルチモーダル処理の統括 |
+| Agent Teams | **Opus**（デフォルト） | `CLAUDE_CODE_SUBAGENT_MODEL` で設定。高い推論能力で並列作業に対応 |
+
+### 呼び出し基準
+
+| 出力サイズ | 方法 | 理由 |
+|-----------|------|------|
+| 短い（〜20行） | 直接呼び出しOK | 200Kコンテキストで吸収可能 |
+| 中程度（20-50行） | サブエージェント経由を推奨 | コンテキスト効率化 |
+| 大きい（50行以上） | サブエージェント → ファイル保存 | 詳細は `.claude/docs/` に永続化 |
+| コードベース全体分析 | **Gemini 経由** | 1M context を活用 |
+| 外部リサーチ | **Gemini 経由** | Google Search grounding 活用 |
+
+### 並列処理の選択
+
+| 目的 | 方法 | 適用場面 |
+|------|------|----------|
+| 結果を取得するだけ | サブエージェント | Codex相談、調査、実装 |
+| 相互通信が必要 | **Agent Teams** | 並列実装、並列レビュー |
+
+---
+
+## Workflow
+
+```
+/startproject <機能名>     Phase 1-3: 理解 → 調査&設計 → 計画
+    ↓ 承認後
+/team-implement            Phase 4: Agent Teams で並列実装
+    ↓ 完了後
+/team-review               Phase 5: Agent Teams で並列レビュー
 ```
 
-**カラム追加の場合：**
+1. Gemini でコードベースを分析（1M context）+ Claude がユーザーと要件ヒアリング
+2. Gemini で外部調査 + Codex で設計・計画（並列可）
+3. Claude が調査と設計を統合し、計画をユーザーに提示
+4. 承認後、`/team-implement` で並列実装
+5. `/team-review` で並列レビュー
 
-```bash
-bun run db:generate --name add_users_email
-# → 20251124071741_add_users_email.sql が生成される
-```
+→ 詳細: `/startproject`, `/team-implement`, `/team-review` skills
 
-**ファンクション作成の場合：**
+---
 
-```bash
-bun run db:generate --name create_function_handle_new_user
-# → 20251124071741_create_function_handle_new_user.sql が生成される
-```
+## Tech Stack
 
-**トリガー作成の場合：**
+- **TypeScript** / **Bun** (npm/yarn/pnpm 禁止)
+- **ESLint 9** (lint) / **Prettier** (format) / **TypeScript** (type check)
+- `bun run lint` / `bun run check-types` / `bun run build`
 
-```bash
-bun run db:generate --name create_trigger_on_auth_user_created
-# → 20251124071741_create_trigger_on_auth_user_created.sql が生成される
-```
+→ 詳細: `.claude/rules/dev-environment.md`
 
-# ディレクトリ構造の確認
+---
 
-## treeコマンド
+## Documentation
 
-ディレクトリ構造を確認する際は、`tree`コマンドを使用してください。
+| Location | Content |
+|----------|---------|
+| `.claude/rules/` | Claude の行動規則（コーディング・AI委譲・ワークフロー） |
+| `.claude/specs/` | プロダクト仕様（機能仕様・ドメインモデル） |
+| `.claude/docs/DESIGN.md` | AIシステム設計決定の記録 |
+| `.claude/docs/architecture/` | アーキテクチャ設計ドキュメント（BFF, Core, UI, エラーハンドリング詳細） |
+| `.claude/docs/libraries/` | ライブラリ制約ドキュメント |
+| `.claude/docs/research/` | 調査結果（一時アーティファクト） |
+| `.claude/logs/` | Codex/Gemini入出力ログ（gitignored） |
 
-### 基本的な使い方
+---
 
-```bash
-# 特定のディレクトリの構造を表示
-tree /path/to/directory
+## Language Protocol
 
-# node_modulesを除外して表示
-tree /path/to/directory -I node_modules
-
-# 特定の深さまで表示
-tree /path/to/directory -L 2
-```
-
-### よく使うパターン
-
-```bash
-# authパッケージの構造を確認
-tree /Users/nikawadori/ghq/github.com/nikawa2161/ribon/packages/auth/src -I node_modules
-
-# プロジェクト全体の構造を確認（2階層まで）
-tree /Users/nikawadori/ghq/github.com/nikawa2161/ribon -L 2 -I node_modules
-```
-
-## 使用タイミング
-
-- パッケージ構造を再構成した後
-- 新しいディレクトリやファイルを追加した後
-- ファイル移動や削除を行った後
-- ユーザーに構造を説明する際
+- **思考・コード**: 英語
+- **ユーザー対話**: 日本語
