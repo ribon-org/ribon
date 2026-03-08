@@ -1,0 +1,54 @@
+name: "バグ報告"
+description: "バグを報告する"
+labels: ["type/bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "バグの内容"
+      description: "何が起きているか"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "再現手順"
+      description: "バグを再現する手順"
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "期待する動作"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: "実際の動作"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: "対象エリア"
+      options:
+        - frontend
+        - backend
+        - db
+        - auth
+        - ui
+        - infra
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "補足情報"
+      description: "スクリーンショット、ログなど"
+    validations:
+      required: false

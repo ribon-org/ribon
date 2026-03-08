@@ -1,0 +1,29 @@
+name: "タスク"
+description: "開発タスク・改善作業"
+labels: ["type/task"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "タスク内容"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "完了条件"
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: "対象エリア"
+      options:
+        - frontend
+        - backend
+        - db
+        - auth
+        - ui
+        - infra
+    validations:
+      required: false
