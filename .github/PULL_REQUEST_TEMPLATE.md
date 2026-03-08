@@ -1,8 +1,8 @@
-## チケットへのリンク
+## 関連Issue
 
-<!-- チケットの番号を追加(RIBON-チケット番号) -->
+<!-- Issue番号を記載（例: Close #123） -->
 
-- [該当チケット](https://nikawa2161t.atlassian.net/browse/RIBON-番号)
+- Close #
 
 ## やったこと
 
