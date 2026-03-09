@@ -8,7 +8,6 @@ Claude follows the judgment flow in CLAUDE.md and automatically calls these with
 
 | Action | Trigger |
 |--------|---------|
-| Codex CLI (`codex exec ...`) | Planning, design, architecture, complex code, debugging |
 | Gemini CLI (`gemini -p ...`) | Codebase analysis, external research, multimodal files |
 | Subagents (Task tool) | Output > ~20 lines, or context should be preserved |
 | Multimodal file delegation | PDF/video/audio/image files appear in the task |

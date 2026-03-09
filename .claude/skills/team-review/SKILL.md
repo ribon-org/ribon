@@ -122,9 +122,6 @@ Spawn reviewers:
    - Function length (target < 20 lines)
    - Library constraint violations (.claude/docs/libraries/)
 
-   Use Codex CLI for deep analysis of complex logic:
-   codex exec --model gpt-5.3-codex --sandbox read-only --full-auto "{question}" 2>/dev/null
-
    Changed files: {list}
 
    For each finding:
@@ -148,8 +145,6 @@ Spawn reviewers:
    - Focus areas: {list}
    ## Findings
    - [{severity}] {file}:{line} — {issue summary}
-   ## Codex Consultations
-   - {question asked to Codex}: {key insight from response}
    ## Communication with Teammates
    - → {recipient}: {summary of message sent}
    - ← {sender}: {summary of message received}
@@ -284,7 +279,6 @@ Clean up the team
 ## Tips
 
 - **レビュアーの専門分化**: 各レビュアーが異なる視点に集中することで漏れを防ぐ
-- **Codex 活用**: Quality Reviewer が複雑なロジックを Codex に分析させる
 - **レポート永続化**: `.claude/docs/research/` にレビュー結果を保存し、修正時の参照に
 - **競合仮説モード**: バグ調査時は adversarial review パターンが有効
 - **コスト注意**: 3レビュアー = 3x トークン消費。小規模変更にはサブエージェント経由のレビューで十分

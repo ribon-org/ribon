@@ -33,7 +33,7 @@ Phase 1: UNDERSTAND (Gemini 1M context + Claude Lead)
   Gemini がコードベースを分析（1M context）、Claude がユーザーと対話
     ↓
 Phase 2: RESEARCH & DESIGN (Agent Teams — 並列)
-  Researcher（Gemini）←→ Architect（Codex）が双方向通信しながら調査・設計
+  Researcher（Gemini）←→ Architect が双方向通信しながら調査・設計
     ↓
 Phase 3: PLAN & APPROVE (Claude Lead + User)
   調査と設計を統合し、計画を作成してユーザー承認
@@ -175,10 +175,10 @@ Spawn two teammates:
    (If none, write 'None')
    "
 
-2. **Architect** — Codex CLI を使って設計・計画を行う
+2. **Architect** — 設計・計画を行う
    Prompt: "You are the Architect for project: {feature}.
 
-   Your job: Use Codex CLI to design the architecture and create implementation plan.
+   Your job: Design the architecture and create implementation plan.
 
    Project Brief:
    {project brief from Phase 1}
@@ -188,9 +188,6 @@ Spawn two teammates:
    2. Select patterns (considering existing codebase conventions)
    3. Create step-by-step implementation plan with dependencies
    4. Identify risks and mitigation strategies
-
-   How to consult Codex:
-   codex exec --model gpt-5.3-codex --sandbox read-only --full-auto "{question}" 2>/dev/null
 
    Update .claude/docs/DESIGN.md with architecture decisions.
 
@@ -211,8 +208,6 @@ Spawn two teammates:
    - [x] {task}: {brief description of what was done}
    ## Design Decisions
    - {decision}: {rationale}
-   ## Codex Consultations
-   - {question asked to Codex}: {key insight from response}
    ## Communication with Teammates
    - → {recipient}: {summary of message sent}
    - ← {sender}: {summary of message received}
@@ -238,9 +233,9 @@ Researcher: "httpx has a connection pool limit of 100 by default"
 
 Without Agent Teams (old subagent approach), this would require:
 1. Gemini subagent finishes → returns summary
-2. Claude reads summary → creates new Codex subagent prompt
-3. Codex subagent finishes → returns summary
-4. If Codex needs more info → another Gemini subagent round
+2. Claude reads summary → creates new prompt
+3. Another subagent finishes → returns summary
+4. If more info needed → another round
 
 Agent Teams collapses this into a single parallel session with real-time interaction.
 
@@ -346,7 +341,7 @@ Present the plan in Japanese:
 ## Tips
 
 - **Phase 1**: Gemini（1M context）でコードベースを分析し、Claude がユーザーと対話する
-- **Phase 2**: Agent Teams の双方向通信により、Researcher（Gemini）と Architect（Codex）が相互に影響し合える
+- **Phase 2**: Agent Teams の双方向通信により、Researcher（Gemini）と Architect が相互に影響し合える
 - **Phase 3**: 計画承認後、`/team-implement` で並列実装に進む
 - **Ctrl+T**: タスクリストの表示切り替え
 - **Shift+Up/Down**: チームメイト間の移動（Agent Teams 使用時）

@@ -78,14 +78,6 @@ gemini -p "Analyze: components, relationships, data flow" < /path/to/diagram.png
 > Screenshots can be read by Claude's Read tool directly.
 > Use Gemini only for diagrams, charts, or complex image analysis.
 
-## What Gemini Does NOT Do
-
-| Task | Who Does It |
-|------|-------------|
-| Planning / design | **Codex CLI** |
-| Debugging / error analysis | **Codex CLI** |
-| Code implementation | **Claude / general-purpose subagent** |
-
 ## Working Principles
 
 ### 1. Be Specific in Prompts

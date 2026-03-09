@@ -6,7 +6,6 @@ Routing rules:
 - Multimodal files (PDF/video/audio/image) → Gemini CLI (HIGHEST PRIORITY)
 - Codebase understanding / large analysis → Gemini CLI (1M context)
 - External research / survey → Gemini CLI (Google Search grounding)
-- Planning, design, complex code → Codex CLI
 """
 
 import json
@@ -33,32 +32,6 @@ MULTIMODAL_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-# Triggers for Codex (planning, design, debugging, complex implementation)
-CODEX_TRIGGERS = {
-    "ja": [
-        "設計", "どう設計", "アーキテクチャ",
-        "計画", "計画を立てて",
-        "なぜ動かない", "エラー", "バグ", "デバッグ",
-        "どちらがいい", "比較して", "トレードオフ",
-        "実装方法", "どう実装",
-        "リファクタリング", "リファクタ",
-        "レビュー",
-        "考えて", "分析して", "深く",
-        "最適化",
-    ],
-    "en": [
-        "design", "architecture", "architect",
-        "plan", "planning",
-        "debug", "error", "bug", "not working", "fails",
-        "compare", "trade-off", "tradeoff", "which is better",
-        "how to implement", "implementation", "complex",
-        "refactor", "simplify",
-        "review", "check this",
-        "think", "analyze", "deeply",
-        "optimize", "performance",
-    ],
-}
-
 # Triggers for Gemini research (codebase analysis + external research)
 GEMINI_RESEARCH_TRIGGERS = {
     "ja": [
@@ -82,7 +55,7 @@ def detect_multimodal_files(prompt: str) -> str | None:
     """Detect multimodal file references in the prompt. Returns matched file path or None."""
     match = MULTIMODAL_PATTERN.search(prompt)
     if match:
-        return match.group(0).strip().rstrip('"\',')
+        return match.group(0).strip().rstrip('"\',' )
     return None
 
 
@@ -97,12 +70,6 @@ def detect_agent(prompt: str) -> tuple[str | None, str, bool]:
     multimodal_file = detect_multimodal_files(prompt)
     if multimodal_file:
         return "gemini-multimodal", multimodal_file, True
-
-    # Codex triggers (planning, design, debug, complex code)
-    for triggers in CODEX_TRIGGERS.values():
-        for trigger in triggers:
-            if trigger in prompt_lower:
-                return "codex", trigger, False
 
     # Gemini research triggers (codebase analysis + external research)
     for triggers in GEMINI_RESEARCH_TRIGGERS.values():
@@ -134,21 +101,6 @@ def main():
                         "Pass the file to Gemini with specific extraction instructions: "
                         f'`gemini -p "Extract: {{what to extract}}" < {trigger} 2>/dev/null` '
                         "Do NOT attempt to read this file directly — use Gemini for content extraction."
-                    )
-                }
-            }
-            print(json.dumps(output))
-
-        elif agent == "codex":
-            output = {
-                "hookSpecificOutput": {
-                    "hookEventName": "UserPromptSubmit",
-                    "additionalContext": (
-                        f"[Agent Routing] Detected '{trigger}' — this task may benefit from "
-                        "Codex CLI for planning, design, or complex implementation. Consider: "
-                        "`codex exec --model gpt-5.3-codex --sandbox read-only --full-auto "
-                        '"{task description}"` for design decisions, planning, debugging, '
-                        "or complex analysis."
                     )
                 }
             }

@@ -293,7 +293,7 @@ def generate_checkpoint(
     lines.append("")
 
     # Summary
-    codex_count = sum(1 for e in cli_entries if e.get("tool") == "codex")
+    
     gemini_count = sum(1 for e in cli_entries if e.get("tool") == "gemini")
     total_files = sum(len(v) for v in file_changes.values())
     total_tasks = sum(len(t.get("tasks", [])) for t in teams_data)
@@ -314,7 +314,7 @@ def generate_checkpoint(
         f"{len(file_changes['created'])} created, "
         f"{len(file_changes['deleted'])} deleted)"
     )
-    lines.append(f"- **Codex consultations**: {codex_count}")
+    
     lines.append(f"- **Gemini researches**: {gemini_count}")
     if teams_data:
         total_members = sum(len(t.get("members", [])) for t in teams_data)
@@ -372,12 +372,11 @@ def generate_checkpoint(
     lines.append("## CLI Consultations")
     lines.append("")
 
-    codex_entries = [e for e in cli_entries if e.get("tool") == "codex"]
     gemini_entries = [e for e in cli_entries if e.get("tool") == "gemini"]
 
-    for entries, name in [(codex_entries, "Codex"), (gemini_entries, "Gemini")]:
+    for entries, name in [(gemini_entries, "Gemini")]:
         if entries:
-            lines.append(f"### {name} ({len(entries)} {'consultations' if name == 'Codex' else 'researches'})")
+            lines.append(f"### {name} ({len(entries)} researches)")
             lines.append("")
             for entry in entries[:15]:
                 status = "✓" if entry.get("success", False) else "✗"
@@ -486,14 +485,12 @@ def generate_session_summary(
     """Generate concise session summary for CLAUDE.md."""
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     total_files = sum(len(v) for v in file_changes.values())
-    codex_count = sum(1 for e in cli_entries if e.get("tool") == "codex")
+    
     gemini_count = sum(1 for e in cli_entries if e.get("tool") == "gemini")
 
     summary_lines = [f"### {today}", ""]
     summary_lines.append(f"- {len(commits)} commits, {total_files} files changed")
 
-    if codex_count:
-        summary_lines.append(f"- Codex: {codex_count} consultations")
     if gemini_count:
         summary_lines.append(f"- Gemini: {gemini_count} researches")
 
@@ -557,7 +554,7 @@ A "skill" is a repeatable workflow pattern that can be triggered by specific phr
 
 3. **Check against existing skills** in `.claude/skills/`:
    - startproject, team-implement, team-review, plan, tdd, simplify
-   - codex-system, gemini-system, design-tracker, checkpointing
+   - gemini-system, design-tracker, checkpointing
    - research-lib, update-design, update-lib-docs, init
    - If pattern matches an existing skill, note it but still report
 

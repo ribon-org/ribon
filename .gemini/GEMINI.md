@@ -46,8 +46,8 @@ Extract content from non-text files:
 
 | Task | Who Does It |
 |------|-------------|
-| Design decisions / Planning | **Codex CLI** |
-| Debugging / Error analysis | **Codex CLI** |
+
+
 | Code implementation | **Claude Code / Subagent** |
 
 ## Output Format
@@ -82,6 +82,5 @@ Structure your response for Claude Code to use:
 
 ## CLI Logs
 
-Codex/Gemini への入出力は `.claude/logs/cli-tools.jsonl` に記録されています。
 
 `/checkpointing` 実行後、下記に Session History が追記されます。

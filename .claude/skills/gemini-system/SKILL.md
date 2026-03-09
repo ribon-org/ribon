@@ -6,7 +6,6 @@ description: |
   MUST use when PDF, video, audio, or image files need content extraction.
   Also use for large-scale codebase understanding and external research/survey.
   Auto-triggers: file extensions .pdf, .mp4, .mov, .mp3, .wav, .m4a.
-  Planning/design → use Codex instead.
 metadata:
   short-description: Gemini CLI — 1M context analysis, research & multimodal
 ---
@@ -76,14 +75,6 @@ gemini -p "Analyze: components, relationships, data flow" < /path/to/diagram.png
 ## Auto-Trigger（自動発動）
 
 マルチモーダルファイルがタスクに登場した時点で、ユーザー指示を待たず自動で Gemini に渡す。
-
-## Gemini を使わないこと
-
-| タスク | 正しい担当 |
-|--------|-----------|
-| 設計・計画 | **Codex** |
-| デバッグ | **Codex** |
-| コード実装 | **Claude / サブエージェント** |
 
 ## How to Use
 

@@ -2,7 +2,7 @@
 
 **マルチエージェント協調フレームワーク（Opus 4.6 + Agent Teams 対応）**
 
-Claude Code が全体統括し、Codex CLI（計画・難実装）と Gemini CLI（1M context 活用）を使い分ける。
+Claude Code が全体統括し、Gemini CLI（1M context 活用）を使い分ける。
 
 ---
 
@@ -11,11 +11,9 @@ Claude Code が全体統括し、Codex CLI（計画・難実装）と Gemini CLI
 | Agent | Model | Role | Use For |
 |-------|-------|------|---------|
 | **Claude Code（メイン）** | Opus 4.6 | 全体統括 | ユーザー対話、タスク管理、簡潔なコード編集 |
-| **general-purpose（サブエージェント）** | **Opus** | 実装・Codex委譲 | コード実装、Codex委譲、ファイル操作 |
-| **codex-debugger（サブエージェント）** | **Opus** | エラー解析 | Codex CLI でエラーの根本原因分析・修正提案 |
+| **general-purpose（サブエージェント）** | **Opus** | 実装 | コード実装、ファイル操作 |
 | **gemini-explore（サブエージェント）** | **Opus** | 大規模分析・調査 | コードベース理解、外部リサーチ、マルチモーダル読取（1M context） |
 | **Agent Teams チームメイト** | **Opus**（デフォルト） | 並列協調 | /startproject, /team-implement, /team-review |
-| **Codex CLI** | gpt-5.3-codex | 計画・難しい実装 | アーキテクチャ設計、実装計画、複雑なコード実装 |
 | **Gemini CLI** | gemini-3-pro | 1M context エージェント | コードベース分析、リサーチ、マルチモーダル読取 |
 
 ### 判断フロー
@@ -31,9 +29,6 @@ Claude Code が全体統括し、Codex CLI（計画・難実装）と Gemini CLI
   ├── 外部情報・リサーチ・サーベイが必要？
   │     → YES: Gemini に委譲（Google Search grounding 活用）
   │
-  ├── 計画・設計・難しいコードが必要？
-  │     → YES: Codex に相談 or 実装させる
-  │
   └── 通常のコード実装？
         → メインが直接 or サブエージェントに委託
 ```
@@ -41,15 +36,6 @@ Claude Code が全体統括し、Codex CLI（計画・難実装）と Gemini CLI
 ---
 
 ## Quick Reference
-
-### Codex を使う時
-
-- **計画・設計**（「どう実装？」「アーキテクチャ」「計画を立てて」）
-- **難しいコード実装**（複雑なアルゴリズム、最適化、マルチステップ実装）
-- **デバッグ**（「なぜ動かない？」「エラーの原因は？」）
-- **比較検討**（「AとBどちらがいい？」「トレードオフは？」）
-
-→ 詳細: `.claude/rules/codex-delegation.md`
 
 ### Gemini を使う時
 
@@ -80,7 +66,6 @@ Gemini CLI は **1M トークンのコンテキスト**を持ち、以下の3つ
 ### サブエージェントを使う時
 
 - **コード実装**（メインのコンテキストを節約したい場合）
-- **Codex 委譲**（計画・設計の相談をサブエージェント経由で）
 - **調査結果の整理** → `.claude/docs/research/` に保存
 
 ---
@@ -98,8 +83,7 @@ Claude Code (Opus 4.6) のコンテキストは **200K トークン**（実質 *
 
 | エージェント | モデル | 理由 |
 |------------|--------|------|
-| general-purpose | **Opus** | 高い推論能力でコード実装・Codex委譲を高品質に実行 |
-| codex-debugger | **Opus** | エラー解析には高い推論能力が必要。Codex への的確な質問生成に強い |
+| general-purpose | **Opus** | 高い推論能力でコード実装を高品質に実行 |
 | gemini-explore | **Opus** | Gemini CLI（1M context）を活用した大規模分析・調査・マルチモーダル処理の統括 |
 | Agent Teams | **Opus**（デフォルト） | `CLAUDE_CODE_SUBAGENT_MODEL` で設定。高い推論能力で並列作業に対応 |
 
@@ -117,7 +101,7 @@ Claude Code (Opus 4.6) のコンテキストは **200K トークン**（実質 *
 
 | 目的 | 方法 | 適用場面 |
 |------|------|----------|
-| 結果を取得するだけ | サブエージェント | Codex相談、調査、実装 |
+| 結果を取得するだけ | サブエージェント | 調査、実装 |
 | 相互通信が必要 | **Agent Teams** | 並列実装、並列レビュー |
 
 ---
@@ -133,7 +117,7 @@ Claude Code (Opus 4.6) のコンテキストは **200K トークン**（実質 *
 ```
 
 1. Gemini でコードベースを分析（1M context）+ Claude がユーザーと要件ヒアリング
-2. Gemini で外部調査 + Codex で設計・計画（並列可）
+2. Gemini で外部調査 + 設計・計画（並列可）
 3. Claude が調査と設計を統合し、計画をユーザーに提示
 4. 承認後、`/team-implement` で並列実装
 5. `/team-review` で並列レビュー
@@ -162,7 +146,7 @@ Claude Code (Opus 4.6) のコンテキストは **200K トークン**（実質 *
 | `.claude/docs/architecture/` | アーキテクチャ設計ドキュメント（BFF, Core, UI, エラーハンドリング詳細） |
 | `.claude/docs/libraries/` | ライブラリ制約ドキュメント |
 | `.claude/docs/research/` | 調査結果（一時アーティファクト） |
-| `.claude/logs/` | Codex/Gemini入出力ログ（gitignored） |
+| `.claude/logs/` | Gemini入出力ログ（gitignored） |
 
 ---
 
