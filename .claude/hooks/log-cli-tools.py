@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook: Log Codex/Gemini CLI input/output to JSONL file.
+PostToolUse hook: Log Gemini CLI input/output to JSONL file.
 
-Triggers after Bash tool calls containing 'codex' or 'gemini' commands.
+Triggers after Bash tool calls containing 'gemini' commands.
 Logs are stored in .claude/logs/cli-tools.jsonl
 
-All agents (Claude Code, subagents, Codex, Gemini) can read this log.
+All agents (Claude Code, subagents, Gemini) can read this log.
 """
 
 import json
@@ -17,22 +17,6 @@ from pathlib import Path
 
 LOG_DIR = Path(__file__).parent.parent / "logs"
 LOG_FILE = LOG_DIR / "cli-tools.jsonl"
-
-
-def extract_codex_prompt(command: str) -> str | None:
-    """Extract prompt from codex exec command."""
-    # Pattern: codex exec ... "prompt" or codex exec ... 'prompt'
-    patterns = [
-        r'codex\s+exec\s+.*?--full-auto\s+"([^"]+)"',
-        r"codex\s+exec\s+.*?--full-auto\s+'([^']+)'",
-        r'codex\s+exec\s+.*?"([^"]+)"\s*2>/dev/null',
-        r"codex\s+exec\s+.*?'([^']+)'\s*2>/dev/null",
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, command, re.DOTALL)
-        if match:
-            return match.group(1).strip()
-    return None
 
 
 def extract_gemini_prompt(command: str) -> str | None:
@@ -47,12 +31,6 @@ def extract_gemini_prompt(command: str) -> str | None:
         if match:
             return match.group(1).strip()
     return None
-
-
-def extract_model(command: str) -> str | None:
-    """Extract model name from command."""
-    match = re.search(r"--model\s+(\S+)", command)
-    return match.group(1) if match else None
 
 
 def truncate_text(text: str, max_length: int = 2000) -> str:
@@ -88,22 +66,16 @@ def main() -> None:
     command = tool_input.get("command", "")
     output = tool_response.get("stdout", "") or tool_response.get("content", "")
 
-    # Check if this is a codex or gemini command
-    is_codex = "codex" in command.lower()
-    is_gemini = "gemini" in command.lower() and "codex" not in command.lower()
+    # Check if this is a gemini command
+    is_gemini = "gemini" in command.lower()
 
-    if not (is_codex or is_gemini):
+    if not is_gemini:
         return
 
-    # Extract prompt based on tool type
-    if is_codex:
-        tool = "codex"
-        prompt = extract_codex_prompt(command)
-        model = extract_model(command) or "gpt-5.3-codex"
-    else:
-        tool = "gemini"
-        prompt = extract_gemini_prompt(command)
-        model = "gemini-3-pro-preview"
+    # Extract prompt
+    tool = "gemini"
+    prompt = extract_gemini_prompt(command)
+    model = "gemini-3-pro-preview"
 
     if not prompt:
         # Could not extract prompt, skip logging

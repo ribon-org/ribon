@@ -20,16 +20,6 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-codex-before-write.py\"",
-            "timeout": 10
-          }
-        ]
-      },
-      {
         "matcher": "WebSearch|WebFetch",
         "hooks": [
           {
@@ -74,23 +64,8 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-codex-after-plan.py\"",
-            "timeout": 10
-          }
-        ]
-      },
-      {
         "matcher": "Bash",
         "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/error-to-codex.py\"",
-            "timeout": 10
-          },
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-test-analysis.py\"",
@@ -171,7 +146,6 @@
       "Bash(docker:*)",
       "Bash(docker-compose:*)",
       "Bash(gemini:*)",
-      "Bash(codex:*)",
       "Bash(pkill:*)",
       "Bash(for:*)",
       "Bash(do)",

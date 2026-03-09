@@ -20,7 +20,7 @@ metadata:
 ┌─────────────────────────────────────────────────────────────┐
 │  1. Collect Everything                                       │
 │     ├── git log (commits, file changes, line stats)          │
-│     ├── CLI logs (Codex/Gemini consultations)                │
+│     ├── CLI logs (Gemini consultations)                       │
 │     ├── Agent Teams activity (tasks, teammates, messages)    │
 │     └── Design decisions (.claude/docs/DESIGN.md changes)    │
 │                                                              │
@@ -57,7 +57,7 @@ metadata:
 
 ### CLI Consultations
 
-- Codex consultations (prompt, success/failure)
+
 - Gemini researches (prompt, success/failure)
 
 ### Agent Teams Activity
@@ -88,7 +88,6 @@ metadata:
 ## Summary
 - **Commits**: 12
 - **Files changed**: 15 (10 modified, 4 created, 1 deleted)
-- **Codex consultations**: 3
 - **Gemini researches**: 2
 - **Agent Teams sessions**: 1 (3 teammates)
 - **Tasks completed**: 8/10
@@ -111,10 +110,6 @@ metadata:
 
 ## CLI Consultations
 
-### Codex (3 consultations)
-- ✓ Design: Architecture for Agent Teams integration
-- ✓ Debug: Task dependency resolution
-- ✗ Review: (timeout)
 
 ### Gemini (2 researches)
 - ✓ Research: Agent Teams best practices
@@ -126,7 +121,7 @@ metadata:
 **Composition:**
 - Lead: Claude (orchestration)
 - Researcher: Gemini-powered (external research)
-- Architect: Codex-powered (design decisions)
+- Architect: Design decisions
 
 **Task List:**
 - [x] Research library options (Researcher)
@@ -168,8 +163,6 @@ Researched httpx library constraints and API patterns for the new API client mod
 Designed API client module architecture with HTTP/2 support.
 ## Design Decisions
 - Use httpx[http2] for multiplexed connections: reduces latency for parallel requests
-## Codex Consultations
-- Connection pool sizing strategy: Codex recommended dynamic pool based on load
 ## Communication with Teammates
 - → Researcher: Request HTTP/2 multiplexing research
 - ← Researcher: httpx supports HTTP/2 via h2
@@ -205,7 +198,7 @@ Each checkpoint also appends a concise summary to CLAUDE.md:
 
 ### 2026-02-08
 - 12 commits, 15 files changed
-- Codex: 3 consultations (design, debug, review)
+
 - Gemini: 2 researches (agent teams, library comparison)
 - Agent Teams: 1 session (3 teammates, 8/10 tasks completed)
 - New skills: /team-implement, /team-review
@@ -221,7 +214,7 @@ The checkpoint is automatically analyzed to find reusable patterns:
 **What it looks for:**
 - Sequences of commits forming logical workflows
 - File change patterns (e.g., test + implementation together)
-- CLI consultation sequences (research → design → implement)
+- CLI consultation sequences (research → implement)
 - Agent Teams coordination patterns (team composition, task sizing)
 - Multi-step operations that could be templated
 
